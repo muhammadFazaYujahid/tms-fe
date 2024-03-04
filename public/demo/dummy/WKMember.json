@@ -1,0 +1,44 @@
+{
+    "data": [
+        {
+            "userKey": "MM-01",
+            "name": "faza",
+            "email": "faza@me.com",
+            "role": "admin",
+            "workspaceId": "wk-01",
+            "orgId": "org-01"
+        },
+        {
+            "userKey": "MM-01",
+            "name": "ilham",
+            "email": "ilham@me.com",
+            "role": "admin",
+            "workspaceId": "wk-01",
+            "orgId": "org-01"
+        },
+        {
+            "userKey": "MM-01",
+            "name": "bagus",
+            "email": "bagus@me.com",
+            "role": "admin",
+            "workspaceId": "wk-01",
+            "orgId": "org-01"
+        },
+        {
+            "userKey": "MM-01",
+            "name": "fajar",
+            "email": "fajar@me.com",
+            "role": "admin",
+            "workspaceId": "wk-01",
+            "orgId": "org-01"
+        },
+        {
+            "userKey": "MM-01",
+            "name": "puji",
+            "email": "puji@me.com",
+            "role": "admin",
+            "workspaceId": "wk-01",
+            "orgId": "org-01"
+        }
+    ]
+}

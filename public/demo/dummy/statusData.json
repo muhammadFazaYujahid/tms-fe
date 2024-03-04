@@ -1,0 +1,16 @@
+{
+    "data": [
+        {
+            "id": "to-do",
+            "status": "To Do"
+        },
+        {
+            "id": "in-progress",
+            "status": "In Progress"
+        },
+        {
+            "id": "done",
+            "status": "Done"
+        }
+    ]
+}

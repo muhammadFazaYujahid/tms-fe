@@ -1,0 +1,82 @@
+{
+    "data": [
+        {
+            "key": "DPJ-1",
+            "name": "Dummy Project 1",
+            "people": {
+                "leader": "Faza",
+                "member": [
+                    "faza",
+                    "fajar",
+                    "ilham",
+                    "galih"
+                ]
+            }
+        },
+        {
+            "key": "DPJ-2",
+            "name": "Dummy Project 2",
+            "people": {
+                "leader": "fajar",
+                "member": [
+                    "ahmad",
+                    "faza",
+                    "ilham",
+                    "galih"
+                ]
+            }
+        },
+        {
+            "key": "DPJ-3",
+            "name": "Dummy Project 3",
+            "people": {
+                "leader": "ahmad",
+                "member": [
+                    "ahmad",
+                    "fajar",
+                    "faza",
+                    "galih"
+                ]
+            }
+        },
+        {
+            "key": "DPJ-4",
+            "name": "Dummy Project 4",
+            "people": {
+                "leader": "ilham",
+                "member": [
+                    "ahmad",
+                    "fajar",
+                    "ilham",
+                    "faza"
+                ]
+            }
+        },
+        {
+            "key": "DPJ-5",
+            "name": "Dummy Project 5",
+            "people": {
+                "leader": "galih",
+                "member": [
+                    "ahmad",
+                    "fajar",
+                    "abdul",
+                    "galih"
+                ]
+            }
+        },
+        {
+            "key": "DPJ-6",
+            "name": "Dummy Project 6",
+            "people": {
+                "leader": "abdul",
+                "member": [
+                    "ahmad",
+                    "fajar",
+                    "ilham",
+                    "galih"
+                ]
+            }
+        }
+    ]
+}

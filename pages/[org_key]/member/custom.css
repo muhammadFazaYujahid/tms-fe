@@ -1,0 +1,13 @@
+.img-profile {
+    position: relative;
+    top: 120px;
+    left: 85px;
+}
+
+@media (max-width: 480px) {
+    .img-profile {
+        position: relative;
+        top: 120px;
+        left: 85px;
+    }
+}

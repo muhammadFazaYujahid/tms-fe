@@ -1,0 +1,29 @@
+{
+    "data":[
+        {
+            "key":"WK-01",
+            "name": "Workspace 01"
+
+        },
+        {
+            "key":"WK-02",
+            "name": "Workspace 02"
+
+        },
+        {
+            "key":"WK-03",
+            "name": "Workspace 03"
+
+        },
+        {
+            "key":"WK-04",
+            "name": "Workspace 04"
+
+        },
+        {
+            "key":"WK-05",
+            "name": "Workspace 05"
+
+        }
+    ]
+}

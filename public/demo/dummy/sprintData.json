@@ -1,0 +1,60 @@
+{
+    "data": [
+        {
+            "id": "PJJ-01",
+            "name": "Project 1",
+            "start": "2023-01-01",
+            "end": "2023-03-01",
+            "goals": ""
+        },
+        {
+            "id": "PJJ-02",
+            "name": "Project 2",
+            "start": "2023-02-01",
+            "end": "2023-04-01",
+            "goals": ""
+        },
+        {
+            "id": "PJJ-03",
+            "name": "Project 3",
+            "start": "2023-01-01",
+            "end": "2023-04-01",
+            "goals": ""
+        },
+        {
+            "id": "PJJ-04",
+            "name": "Project 4",
+            "start": "2023-02-01",
+            "end": "2023-07-01",
+            "goals": ""
+        },
+        {
+            "id": "PJJ-05",
+            "name": "Project 5",
+            "start": "2023-03-01",
+            "end": "2023-06-01",
+            "goals": ""
+        },
+        {
+            "id": "PJJ-06",
+            "name": "Project 6",
+            "start": "2023-02-01",
+            "end": "2023-08-01",
+            "goals": ""
+        },
+        {
+            "id": "PJJ-07",
+            "name": "Project 7",
+            "start": "2023-01-04",
+            "end": "2023-09-10",
+            "goals": ""
+        },
+        {
+            "id": "PJJ-08",
+            "name": "Project 8",
+            "start": "2023-03-11",
+            "end": "2023-10-21",
+            "goals": ""
+        }
+    ]
+}

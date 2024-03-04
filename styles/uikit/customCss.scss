@@ -1,0 +1,78 @@
+.p-dialog {
+    .p-dialog-mask {
+        background-color: #000;
+    }
+}
+
+.img-profile {
+    width: 130px;
+    height: 130px;
+    position: relative;
+    top: 60px;
+    left: 25px;
+}
+
+.p-speeddial-button.p-button.p-button-icon-only {
+    width: 3rem;
+    height: 3rem;
+}
+
+.p-menuitem-link-custom {
+    .p-submenu-icon {
+        display: none;
+    }
+}
+
+.p-menubar-custom {
+    .p-submenu-list {
+        margin-left: -120px;
+    }
+}
+
+.custom-sidebar-header {
+    position: absolute;
+    right: 5%;
+    top: 0;
+    margin-top: 1em;
+}
+
+@media (max-width: 480px) {
+    .img-profile {
+        position: relative;
+        top: 50px;
+        left: 25px;
+    }
+
+    .custom-sidebar-header {
+        position: absolute;
+        right: 12%;
+        top: 0;
+        margin-top: 1em;
+    }
+}
+
+@import "https://code.highcharts.com/css/highcharts.css";
+
+#container {
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+.highcharts-treegrid-node-level-1 {
+    font-size: 13px;
+    font-weight: bold;
+    fill: black;
+}
+
+.highcharts-container {
+    background-color: #fff !important;
+}
+
+.highcharts-darkmode {
+    display: none !important;
+}
+
+.custom-splitbutton-custom .p-splitbutton-icon {
+    color: red;
+    /* Change the color to your desired value */
+}
