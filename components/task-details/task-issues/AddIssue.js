@@ -114,7 +114,7 @@ const AddIssue = ({ taskKey, taskName }) => {
 
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className='col-12'>
-                <SelectButton className='text-center mb-5 w-full p-button-sm' value={issueType} onChange={(e) => getIssueType(e.value)} options={buttonOptions} />
+                {/* <SelectButton className='text-center mb-5 w-full p-button-sm' value={issueType} onChange={(e) => getIssueType(e.value)} options={buttonOptions} /> */}
 
                 {(isLinkIssue) ? <>
                     <div className="p-inputgroup">

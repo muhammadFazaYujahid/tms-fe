@@ -10,7 +10,7 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import EditName from './EditName';
 import { LayoutContext } from '../../../layout/context/layoutcontext';
 
-const FileList = ({ taskKey, taskName }) => {
+const FileList = ({ taskKey, taskName, additionalInfo }) => {
     const { showToast } = useContext(LayoutContext);
 
     const [attachments, setAttachments] = useState([]);
@@ -109,12 +109,14 @@ const FileList = ({ taskKey, taskName }) => {
                                             <span className='ml-2  text-lg'>{attachment.attach_name}</span>
                                         </div>
                                     </div>
-                                    <div style={{ float: "right" }} onClick={(e) => e.stopPropagation()} className='flex-grow-1 flex align-items-end justify-content-end font-bold text-white m-2 px-5'>
-                                        <ConfirmPopup />
-                                        <Button onClick={(e) => { editFile(e, attachment) }} icon="pi pi-pencil" className="p-button-secondary p-button-text p-button-rounded ml-3" style={{ margin: "-0.6em -2em -0.6em 0" }}></Button>
+                                    {!(additionalInfo.status_key.split('-')[0] === 'CP' && additionalInfo.verify_status === "verified") &&
+                                        <div style={{ float: "right" }} onClick={(e) => e.stopPropagation()} className='flex-grow-1 flex align-items-end justify-content-end font-bold text-white m-2 px-5'>
+                                            <ConfirmPopup />
+                                            <Button onClick={(e) => { editFile(e, attachment) }} icon="pi pi-pencil" className="p-button-secondary p-button-text p-button-rounded ml-3" style={{ margin: "-0.6em -2em -0.6em 0" }}></Button>
 
-                                        <Button onClick={(e) => { e.stopPropagation(); confirmDelete(e, attachment) }} icon="pi pi-trash" className="p-button-danger p-button-text p-button-rounded ml-3" style={{ margin: "-0.6em -2em -0.6em 0" }}></Button>
-                                    </div>
+                                            <Button onClick={(e) => { e.stopPropagation(); confirmDelete(e, attachment) }} icon="pi pi-trash" className="p-button-danger p-button-text p-button-rounded ml-3" style={{ margin: "-0.6em -2em -0.6em 0" }}></Button>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>

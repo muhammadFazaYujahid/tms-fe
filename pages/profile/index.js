@@ -87,6 +87,7 @@ const Member = () => {
             <div className='col-12'>
                 <div className='grid'>
                     <div className='col'></div>
+                    {console.log('progile', profile)}
                     <div className='col-12 lg:col-8 m-0' style={{ position: "", background: "url('https://primefaces.org/cdn/primereact/images/galleria/galleria12.jpg')", height: "25vh" }}>
                         <Avatar image={profile.photoUrl} className='img-profile' shape="circle" />
                     </div>

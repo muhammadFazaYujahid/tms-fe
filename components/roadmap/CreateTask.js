@@ -19,6 +19,7 @@ const CreateTask = ({ projectKey }) => {
     const [projectHandler, setProjectHandler] = useState([])
     const [workspace, setWorkspace] = useState([])
     const [selectedSprint, setSelectedSprint] = useState('')
+    const [samePerson, setSamePerson] = useState(false)
 
     const [pertInput, setPertInput] = useState({
         fastest_time: 0,
@@ -58,11 +59,15 @@ const CreateTask = ({ projectKey }) => {
 
     const onSubmit = (data) => {
 
-        const selectedAssigneId = Object.keys(selectedAssigneKeys);
-        const selectedReporterId = Object.keys(selectedReporterKeys);
+        // const selectedAssigneId = Object.keys(selectedAssigneKeys);
+        // const selectedReporterId = Object.keys(selectedReporterKeys);
         // const selectedTeam = teamList.filter(team => selectedMemberId.includes(team.key));
-        const selectedAssigne = workspace.workspace_members.filter((user) => selectedAssigneId.includes(user.user_key))
-        const selecteReporter = workspace.workspace_members.filter((user) => selectedReporterId.includes(user.user_key))
+        // const selectedAssigne = workspace.workspace_members.filter((user) => selectedAssigneId.includes(user.user_key))
+        // const selecteReporter = workspace.workspace_members.filter((user) => selectedReporterId.includes(user.user_key))
+        
+        const selectedAssigne = workspace.workspace_members.filter((user) => user.user_key === selectedAssigneKeys)
+        const selecteReporter = workspace.workspace_members.filter((user) => user.user_key === selectedReporterKeys)
+
         data.project_key = sessionStorage.getItem('project_key');
         data.sprint_key = selectedSprint.sprint_key
         data.assigne = selectedAssigne;
@@ -204,7 +209,7 @@ const CreateTask = ({ projectKey }) => {
                             control={control}
                             render={({ field }) => (
                                 <>
-                                    <TreeSelect
+                                    {/* <TreeSelect
                                         value={selectedAssigneKeys}
                                         onChange={(e) => { setSelectedAssigneKeys(e.value); setSelectedTeam(e) }}
                                         options={projectHandler}
@@ -213,7 +218,11 @@ const CreateTask = ({ projectKey }) => {
                                         className="md:w-25rem w-full"
                                         display="chip"
                                         placeholder="Select Assigne"></TreeSelect>
+                                    {getFormErrorMessage(field.name)} */}
+                                    <Dropdown value={selectedAssigneKeys} onChange={(e) => {setSelectedAssigneKeys(e.value); (e.value === selectedReporterKeys) ? setSamePerson(true) : setSamePerson(false)}} options={projectHandler} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items" className="w-full" placeholder="Select assigner" />
                                     {getFormErrorMessage(field.name)}
+                                    {(samePerson) && <small className='text-orange-400'>Assigner and Watcher are the same person</small>}
+                                    
                                 </>
                             )}
                         />
@@ -229,7 +238,7 @@ const CreateTask = ({ projectKey }) => {
                             control={control}
                             render={({ field }) => (
                                 <>
-                                    <TreeSelect
+                                    {/* <TreeSelect
                                         value={selectedReporterKeys}
                                         onChange={(e) => { setSelectedReporterKeys(e.value); setSelectedTeam(e) }}
                                         options={projectHandler}
@@ -238,7 +247,11 @@ const CreateTask = ({ projectKey }) => {
                                         className="md:w-25rem w-full"
                                         display="chip"
                                         placeholder="Select Reporter"></TreeSelect>
+                                    {getFormErrorMessage(field.name)} */}
+                                    
+                                    <Dropdown value={selectedReporterKeys} onChange={(e) => {setSelectedReporterKeys(e.value); (e.value === selectedAssigneKeys) ? setSamePerson(true) : setSamePerson(false)}} options={projectHandler} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items" className="w-full" placeholder="Select Watcher" />
                                     {getFormErrorMessage(field.name)}
+                                    {(samePerson) && <small className='text-orange-400'>Assigner and Watcher are the same person</small>}
                                 </>
                             )}
                         />

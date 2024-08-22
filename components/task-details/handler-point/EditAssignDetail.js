@@ -58,8 +58,8 @@ const EditAssignDetail = ({ taskData }) => {
         const formattedAssigner = multiSelectFormat(assigner);
         const reporter = taskDetail.task_handlers.filter(handler => handler.type == 'reporter')
         const formattedreporter = multiSelectFormat(reporter);
-        setSelectedAssigneKeys(formattedAssigner)
-        setSelectedReporterKeys(formattedreporter)
+        // setSelectedAssigneKeys(formattedAssigner)
+        // setSelectedReporterKeys(formattedreporter)
 
     }, [taskDetail])
 
@@ -67,8 +67,8 @@ const EditAssignDetail = ({ taskData }) => {
     const defaultValues = {
         task_name: taskDetail.task_name,
         level: taskLevel.filter(data => data.level == taskDetail.level)[0],
-        assigne: [],
-        reporter: [],
+        assigne: taskDetail.task_handlers.find(handler => handler.type === 'assigner')?.handler,
+        reporter: taskDetail.task_handlers.find(handler => handler.type === 'reporter')?.handler,
         fastest_time: taskDetail.optimistic_time,
         normal_time: taskDetail.mostlikely_time,
         slowest_time: taskDetail.pessimistic_time,
@@ -81,10 +81,16 @@ const EditAssignDetail = ({ taskData }) => {
 
     const onSubmit = (data) => {
 
-        const selectedAssigneId = Object.keys(selectedAssigneKeys);
-        const selectedReporterId = Object.keys(selectedReporterKeys);
-        const selectedAssigne = workspace.workspace_members.filter((user) => selectedAssigneId.includes(user.user_key))
-        const selecteReporter = workspace.workspace_members.filter((user) => selectedReporterId.includes(user.user_key))
+        // const selectedAssigneId = Object.keys(selectedAssigneKeys);
+        // const selectedReporterId = Object.keys(selectedReporterKeys);
+        // const selectedAssigne = workspace.workspace_members.filter((user) => selectedAssigneId.includes(user.user_key))
+        // const selecteReporter = workspace.workspace_members.filter((user) => selectedReporterId.includes(user.user_key))
+        
+        const selectedAssigne = workspace.workspace_members.filter((user) => user.user_key === selectedAssigneKeys)
+        const selecteReporter = workspace.workspace_members.filter((user) => user.user_key === selectedReporterKeys)
+        console.log('aasgine', selectedAssigneKeys)
+        console.log('waheter', selectedReporterKeys)
+
         data.task_key = taskDetail.task_key;
         data.project_key = sessionStorage.getItem('project_key');
         data.assigne = selectedAssigne;
@@ -98,6 +104,7 @@ const EditAssignDetail = ({ taskData }) => {
             url: window.location.href,
             additional_text: ''
         }
+        console.log(';data', data)
         const taskServices = new TaskServices();
         taskServices.editAssigPoint(data)
             .then((res) => {
@@ -134,11 +141,11 @@ const EditAssignDetail = ({ taskData }) => {
     const [selectedTeam, setSelectedTeam] = useState([]);
     const [teamList, setTeamList] = useState([]);
     const [teamFormActive, setTeamFormActive] = useState(false);
-    const [selectedAssigneKeys, setSelectedAssigneKeys] = useState(null);
-    const [selectedReporterKeys, setSelectedReporterKeys] = useState(null);
+    const [selectedAssigneKeys, setSelectedAssigneKeys] = useState(taskDetail.task_handlers.find(handler => handler.type === 'assigner')?.handler);
+    const [selectedReporterKeys, setSelectedReporterKeys] = useState(taskDetail.task_handlers.find(handler => handler.type === 'reporter')?.handler);
 
     return (<>
-
+        {/* {console.log('detail', )} */}
         <form onSubmit={handleSubmit(onSubmit)}>
 
             <table className='w-full p-2 mt-3' style={{ borderCollapse: "separate", borderSpacing: "0 15px" }}>
@@ -192,7 +199,7 @@ const EditAssignDetail = ({ taskData }) => {
                             control={control}
                             render={({ field }) => (
                                 <>
-                                    <TreeSelect
+                                    {/* <TreeSelect
                                         value={selectedAssigneKeys}
                                         onChange={(e) => { setSelectedAssigneKeys(e.value); setSelectedTeam(e) }}
                                         options={projectHandler}
@@ -200,7 +207,8 @@ const EditAssignDetail = ({ taskData }) => {
                                         selectionMode="checkbox"
                                         className="md:w-25rem w-full"
                                         display="chip"
-                                        placeholder="Select Assigne"></TreeSelect>
+                                        placeholder="Select Assigne"></TreeSelect> */}
+                                    <Dropdown value={selectedAssigneKeys}  onChange={(e) => setSelectedAssigneKeys(e.value)} options={projectHandler} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items" className="w-full" placeholder="Select assigner" />
                                     {getFormErrorMessage(field.name)}
                                 </>
                             )}
@@ -217,7 +225,7 @@ const EditAssignDetail = ({ taskData }) => {
                             control={control}
                             render={({ field }) => (
                                 <>
-                                    <TreeSelect
+                                    {/* <TreeSelect
                                         value={selectedReporterKeys}
                                         onChange={(e) => { setSelectedReporterKeys(e.value); setSelectedTeam(e) }}
                                         options={projectHandler}
@@ -225,8 +233,9 @@ const EditAssignDetail = ({ taskData }) => {
                                         selectionMode="checkbox"
                                         className="md:w-25rem w-full"
                                         display="chip"
-                                        placeholder="Select Reporter"></TreeSelect>
-                                    {getFormErrorMessage(field.name)}
+                                        placeholder="Select Reporter"></TreeSelect> */}
+                                    <Dropdown value={selectedReporterKeys} onChange={(e) => setSelectedReporterKeys(e.value)} options={projectHandler} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items" className="w-full" placeholder="Select Watcher" />
+                                   {getFormErrorMessage(field.name)}
                                 </>
                             )}
                         />

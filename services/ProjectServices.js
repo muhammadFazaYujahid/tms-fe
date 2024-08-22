@@ -93,13 +93,17 @@ export class ProjectService {
                 Promise.all(
                     user.map((data) => {
                         editedData.push({
-                            key: data.team_key, label: data.team_name, children: data.workspace_members.map((member) => {
-                                return { key: member.user_key, label: member.user.username }
+                            code: data.team_key, label: data.team_name, items: data.workspace_members.map((member) => {
+                                return { value: member.user_key, label: member.user.username }
                             })
+                            //checkbox version
+                            // key: data.team_key, label: data.team_name, children: data.workspace_members.map((member) => {
+                            //     return { key: member.user_key, label: member.user.username }
+                            // })
                         })
                     })
                 )
-                return { editedData, workspace: d.workspace };;
+                return { editedData, workspace: d.workspace };
             });
     }
 

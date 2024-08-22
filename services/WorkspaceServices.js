@@ -7,7 +7,7 @@ export class WorkspaceServices {
         this.contextPath = getConfig().publicRuntimeConfig.contextPath;
         this.serverURL = process.env.SERVER_URL;
         this.org_key = sessionStorage.getItem('org_key');
-        this.work_key = Cookies.get('work_key');
+        this.work_key = sessionStorage.getItem('work_key');
         // this.router = useRouter();
     }
 
@@ -126,8 +126,8 @@ export class WorkspaceServices {
     }
 
     async createTeam(formData) {
-        formData.work_key = Cookies.get('work_key');
-        formData.activity.related_code = Cookies.get('work_key');
+        formData.work_key = sessionStorage.getItem('work_key');
+        formData.activity.related_code = sessionStorage.getItem('work_key');
         const response = await fetch(this.serverURL + '/api/organization/workspace/team', {
             method: 'POST',
             credentials: 'include',
@@ -143,8 +143,8 @@ export class WorkspaceServices {
 
     async inviteUser(formData) {
 
-        formData.work_key = Cookies.get('work_key');
-        formData.activity.related_code = Cookies.get('work_key');
+        formData.work_key = sessionStorage.getItem('work_key');
+        formData.activity.related_code = sessionStorage.getItem('work_key');
         if (formData.role == '') {
             formData.role = 'admin';
         } else {

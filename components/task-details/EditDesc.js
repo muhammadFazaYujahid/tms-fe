@@ -119,12 +119,18 @@ const EditDesc = ({ taskData }) => {
             data-pr-showDelay="100"
             data-pr-at="right+5 top"
             data-pr-my="left center-2">Description</h5>
+            {console.log('dekrpsp', taskData)}
 
         <ScrollPanel style={{ height: "17em" }}>
             <form onSubmit={handleSubmit(onSubmit)}>
                 {(!editable) ? <>
 
-                    <div className="card mx-1" style={{ borderRadius: "10px", minHeight: "17em" }} onDoubleClick={() => { setEditable(true) }}>
+                    <div className="card mx-1"
+                        style={{ borderRadius: "10px", minHeight: "17em" }}
+                        onDoubleClick={() => {
+                            !(taskData.status_key.split('-')[0] === 'CP' && taskData.verify_status === "verified") && setEditable(true)
+                        }}
+                        >
                         <div className='m-0' dangerouslySetInnerHTML={{ __html: taskDetail.description }}></div>
                     </div>
 

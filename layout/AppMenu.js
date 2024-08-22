@@ -15,15 +15,16 @@ const AppMenu = () => {
         {
             label: 'Projects',
             items: [
-                { label: 'Roadmap', icon: 'pi pi-fw pi-server', to: '/' + orgKeyLink + '/' + projectKeyLink + '/roadmap' },
-                { label: 'Backlog', icon: 'pi pi-fw pi-table', to: '/' + orgKeyLink + '/' + projectKeyLink + '/backlog' },
-                { label: 'Board', icon: 'pi pi-fw pi-clone', to: '/' + orgKeyLink + '/' + projectKeyLink + '/board' },
+                { label: 'Roadmap', icon: 'pi pi-fw pi-server', to: '/' + orgKeyLink + "/project/" + projectKeyLink + '/roadmap' },
+                { label: 'Backlog', icon: 'pi pi-fw pi-inbox', to: '/' + orgKeyLink + "/project/" + projectKeyLink + '/backlog' },
+                { label: 'Board', icon: 'pi pi-fw pi-clone', to: '/' + orgKeyLink + "/project/" + projectKeyLink + '/board' },
+                { label: 'Table', icon: 'pi pi-fw pi-table', to: '/' + orgKeyLink + "/project/" + projectKeyLink + '/table' },
             ]
         },
         {
             label: 'Settings',
             items: [
-                { label: 'Project Detail', icon: 'pi pi-fw pi-cog', to: '/' + orgKeyLink + '/' + projectKeyLink + '/detail' },
+                { label: 'Project Detail', icon: 'pi pi-fw pi-cog', to: '/' + orgKeyLink + "/project/" + projectKeyLink + '/detail' },
             ]
         }
     ];

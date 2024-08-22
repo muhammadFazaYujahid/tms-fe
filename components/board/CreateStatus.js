@@ -6,9 +6,13 @@ import { InputText } from 'primereact/inputtext';
 import { Controller, useForm } from 'react-hook-form';
 import { LayoutContext } from '../../layout/context/layoutcontext';
 import { TaskStatusService } from '../../services/TaskStatusService';
+import { ColorPicker } from 'primereact/colorpicker';
+import { Checkbox } from "primereact/checkbox";
 
 const CreateStatus = ({ projectKey }) => {
     const { showToast } = useContext(LayoutContext);
+    const [color, setColor] = useState("fefefe");
+    const [needVerify, setNeedVerify] = useState(false);
 
     const defaultValues = {
         status_name: ''
@@ -21,6 +25,8 @@ const CreateStatus = ({ projectKey }) => {
 
     const onSubmit = (data) => {
         data.project_key = projectKey;
+        data.color = `#${(color === null) ? "f4f4f4" : color}`;
+        data.need_verify = needVerify;
         // data.activity = {
         //     action: 'has Change Task Parent to',
         //     old_value: selectedTask.task_key,
@@ -30,6 +36,7 @@ const CreateStatus = ({ projectKey }) => {
         //     url: window.location.href,
         //     additional_text: ''
         // }
+        console.log('data', data)
         const taskStatusService = new TaskStatusService();
         taskStatusService.createStatus(data)
             .then((res) => {
@@ -64,6 +71,15 @@ const CreateStatus = ({ projectKey }) => {
                     render={({ field }) => (
                         <>
                             <InputText {...field} className='w-full' placeholder='status name' />
+                            <div className='mt-3'>
+                                <label>Color : </label>
+                                <ColorPicker value={color} onChange={(e) => setColor(e.value)} />
+                            </div>
+
+                            <div className="mt-3 d-flex" style={{ display: "flex" }}>
+                                <Checkbox inputId="ingredient1" onChange={e => setNeedVerify(e.checked)} checked={needVerify}></Checkbox>
+                                <label htmlFor="ingredient1" className="ml-2">Confirmation</label>
+                            </div>
                         </>
                     )}
                 />

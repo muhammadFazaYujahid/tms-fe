@@ -10,7 +10,7 @@ import { Sidebar } from 'primereact/sidebar';
 import { useRouter } from 'next/router';
 import { LayoutContext } from '../../../layout/context/layoutcontext';
 
-const TaskIssue = ({ taskKey, taskName }) => {
+const TaskIssue = ({ taskKey, taskName, additionalInfo }) => {
     const { showToast } = useContext(LayoutContext);
 
     const router = useRouter();
@@ -147,6 +147,7 @@ const TaskIssue = ({ taskKey, taskName }) => {
     return (<>
 
         <h5 className='text-xl desc w-fit'>Task Issue</h5>
+        {console.log('issue', issueData)}
         {issueData.filter(issue => issue.type == 'link_issue').map((issue) => (
             <>
                 <div className="col-12">
@@ -164,6 +165,7 @@ const TaskIssue = ({ taskKey, taskName }) => {
                                     <Dropdown
                                         style={{ margin: "-0.6em 0" }} size="small"
                                         value={category}
+                                        disabled={(issue?.taskDetail?.status_key.split('-')[0] === 'CP' && issue?.taskDetail?.verify_status === "verified")}
                                         onChange={(e) => changeStatus(e.value, issue.taskDetail.task_key, issue.taskDetail.task_name)}
                                         // placeholder={taskStatus.filter((status) => status.status_key === issue.taskDetail.status_key)[0].name}
                                         placeholder={
@@ -174,8 +176,9 @@ const TaskIssue = ({ taskKey, taskName }) => {
                                         options={taskStatus.filter((data) => data.status_key !== issue.taskDetail.status_key)}
                                         optionLabel="name"
                                         className="p-inputtext-sm" />
-                                    <ConfirmPopup />
-                                    <Button onClick={(e) => confirmDelete(e, issue)} icon="pi pi-times" className="p-button-danger p-button-text p-button-rounded ml-3" style={{ margin: "-0.6em -2em -0.6em 0" }}></Button>
+                                    <ConfirmPopup />{!(additionalInfo.status_key.split('-')[0] === 'CP' && additionalInfo.verify_status === "verified") && 
+                                        <Button onClick={(e) => confirmDelete(e, issue)} icon="pi pi-times" className="p-button-danger p-button-text p-button-rounded ml-3" style={{ margin: "-0.6em -2em -0.6em 0" }}></Button>
+                                    }
 
                                     {/* <Dropdown style={{ margin: "-0.6em 0" }} size="small" value={category} onChange={(e) => setCategory(e.value)} options={status_list} optionLabel="name" placeholder="To do" className="p-inputtext-sm" /> */}
                                 </div>

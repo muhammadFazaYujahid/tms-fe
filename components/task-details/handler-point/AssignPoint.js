@@ -21,7 +21,7 @@ const AssignPoint = ({ fieldValue }) => {
 
     useEffect(() => {
         setHandlers(fieldValue.task_handlers);
-        if (taskData.flag) {
+        if (taskData?.flag) {
             setIsFlagged(true)
         }
 
@@ -89,7 +89,7 @@ const AssignPoint = ({ fieldValue }) => {
         taskService.changeStatus(formData).then((data) => {
             if (data.success) {
                 emit('refreshTaskDialog');
-                emit('refreshBacklog');
+                emit('refreshBoard');
                 emit('refreshActivity');
                 // emit('refreshStatus', { ...taskData, status_key: formData.status_key });
                 setTaskData({ ...taskData, status_key: formData.status_key })
@@ -105,15 +105,17 @@ const AssignPoint = ({ fieldValue }) => {
     return (<div>
         <div className='grid'>
             <div className='col-3'>
+                {console.log('isi', taskStatus.filter((status) => status.status_key === taskData?.status_key), taskStatus, taskData)}
                 <Dropdown
                     size="small"
                     value={category}
-                    onChange={(e) => changeStatus(e.value, taskData.task_key, taskData.task_name)}
-                    options={taskStatus.filter((data) => data.status_key !== taskData.status_key)}
+                    disabled={(taskData?.status_key.split('-')[0] === 'CP' && taskData?.verify_status === "verified")}
+                    onChange={(e) => changeStatus(e.value, taskData?.task_key, taskData?.task_name)}
+                    options={taskStatus.filter((data) => data.status_key !== taskData?.status_key)}
                     optionLabel="name"
                     placeholder={
                         taskStatus.length > 0
-                            ? taskStatus.filter((status) => status.status_key === taskData.status_key)[0].name
+                            ? taskStatus.filter((status) => status.status_key === taskData?.status_key)[0].name || '-'
                             : ""
                     } className="p-inputtext-sm bg-gray-100 text-gray-900" />
             </div>
@@ -131,7 +133,7 @@ const AssignPoint = ({ fieldValue }) => {
                         <p className='font-medium text-dark'>Urgency Level</p>
                     </td>
                     <td className=''>
-                        <p className='font-medium text-dark'>{getLevel(taskData.level)}</p>
+                        <p className='font-medium text-dark'>{getLevel(taskData?.level)}</p>
                     </td>
                 </tr>
                 <tr className=''>
@@ -139,7 +141,7 @@ const AssignPoint = ({ fieldValue }) => {
                         <p className='font-medium text-dark'>Assigne</p>
                     </td>
                     <td className=''>
-                        {taskData.task_handlers.filter(handler => handler.type == 'assigner').map((handler) => (
+                        {taskData?.task_handlers.filter(handler => handler.type == 'assigner').map((handler) => (
                             <p className='font-medium text-dark' key={handler.id} style={{ cursor: "pointer" }}>{handler.handler_name}</p>
                         ))}
                         {/* <a className='font-medium text-link'>Assign to me</a> */}
@@ -151,7 +153,7 @@ const AssignPoint = ({ fieldValue }) => {
                         <p className='font-medium text-dark'>Reporter</p>
                     </td>
                     <td className=''>
-                        {taskData.task_handlers.filter(handler => handler.type == 'reporter').map((handler) => (
+                        {taskData?.task_handlers.filter(handler => handler.type == 'reporter').map((handler) => (
                             <p className='font-medium text-dark' key={handler.id} style={{ cursor: "pointer" }}>{handler.handler_name}</p>
                         ))}
                     </td>
@@ -161,7 +163,7 @@ const AssignPoint = ({ fieldValue }) => {
                         <p className='font-medium text-dark'>Fastest Duration</p>
                     </td>
                     <td className=''>
-                        <p className='font-medium text-dark' style={{ cursor: "pointer" }}>{taskData.optimistic_time} Days</p>
+                        <p className='font-medium text-dark' style={{ cursor: "pointer" }}>{taskData?.optimistic_time} Days</p>
                     </td>
                 </tr>
                 <tr className=''>
@@ -169,7 +171,7 @@ const AssignPoint = ({ fieldValue }) => {
                         <p className='font-medium text-dark'>Normal Duration</p>
                     </td>
                     <td className=''>
-                        <p className='font-medium text-dark' style={{ cursor: "pointer" }}>{taskData.mostlikely_time} Days</p>
+                        <p className='font-medium text-dark' style={{ cursor: "pointer" }}>{taskData?.mostlikely_time} Days</p>
                     </td>
                 </tr>
                 <tr className=''>
@@ -177,7 +179,7 @@ const AssignPoint = ({ fieldValue }) => {
                         <p className='font-medium text-dark'>Slowest Duration</p>
                     </td>
                     <td className=''>
-                        <p className='font-medium text-dark' style={{ cursor: "pointer" }}>{taskData.pessimistic_time} Days</p>
+                        <p className='font-medium text-dark' style={{ cursor: "pointer" }}>{taskData?.pessimistic_time} Days</p>
                     </td>
                 </tr>
                 <tr className=''>
@@ -185,12 +187,14 @@ const AssignPoint = ({ fieldValue }) => {
                         <p className='font-medium text-dark'>Story Point Estimate</p>
                     </td>
                     <td className=''>
-                        <p className='font-medium text-dark'>{getStoryPoint(taskData.optimistic_time, taskData.mostlikely_time, taskData.pessimistic_time)}</p>
+                        <p className='font-medium text-dark'>{getStoryPoint(taskData?.optimistic_time, taskData?.mostlikely_time, taskData?.pessimistic_time)}</p>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <Button label='Edit' className='p-button-sm' onClick={() => {
+        <Button size='small' label='Edit'
+        disabled={(taskData.status_key.split('-')[0] === 'CP' && taskData.verify_status === "verified")}
+        onClick={() => {
             setEditAssignDialog(true);
             setDialogHeader("Edit Task Detail");
             setDialogContent(<EditAssignDetail taskData={taskData} />)

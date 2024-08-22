@@ -7,8 +7,8 @@ export class TeamServices {
         this.contextPath = getConfig().publicRuntimeConfig.contextPath;
         this.serverURL = process.env.SERVER_URL;
         this.org_key = Cookies.get('org_key');
-        this.work_key = Cookies.get('work_key');
-        this.team_key = Cookies.get('team_key');
+        this.work_key = sessionStorage.getItem('work_key');
+        this.team_key = sessionStorage.getItem('team_key');
         // this.router = useRouter();
     }
 

@@ -10,7 +10,7 @@ import { LayoutContext } from '../../../layout/context/layoutcontext';
 import { emit } from '../../../utils/EventEmitter';
 import { TaskServices } from '../../../services/TaskServices';
 
-const AddComment = ({ taskData }) => {
+const AddComment = ({ taskData, commentAdded }) => {
 
     const { showToast } = useContext(LayoutContext);
 
@@ -40,6 +40,7 @@ const AddComment = ({ taskData }) => {
                     sticky: false
                 });
             }
+            commentAdded(data);
             emit('refreshActivity');
         })
     };

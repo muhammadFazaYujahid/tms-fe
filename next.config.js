@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const path = require('path');
+
+module.exports = {
     reactStrictMode: false,
     trailingSlash: true,
     basePath: process.env.NODE_ENV === 'production' ? '/sakai-react' : '',
@@ -8,9 +9,28 @@ const nextConfig = {
         uploadPath: process.env.NODE_ENV === 'production' ? '/sakai-react/upload.php' : '/api/upload'
     },
     env: {
-        // SERVER_URL: 'https://fazatmsapi.serveo.net',
-        SERVER_URL: 'http://localhost:9000',
-    }
-};
+        // SERVER_URL: 'http://localhost:9000',
+        SERVER_URL: process.env.SERVER_URL,
+    },
+    async rewrites() {
+        return [
+          {
+            source: '/api/:path*',
+            destination: 'https://fazatms.serveo.net/:path*',
+          },
+        ]
+      },
+    webpack(config) {
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            '~': path.resolve(__dirname),
+            '@pages': path.resolve(__dirname, 'pages'),
+            '@components': path.resolve(__dirname, 'components'),
+            '@services': path.resolve(__dirname, 'services'),
+            '@layout': path.resolve(__dirname, 'layout'),
+            '@utils': path.resolve(__dirname, 'utils'),
+        };
 
-module.exports = nextConfig;
+        return config;
+    },
+};

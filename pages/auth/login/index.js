@@ -40,6 +40,7 @@ const LoginPage = () => {
                     sticky: false
                 });
             }
+            console.log('resspon cuy', res);
             window.location = res.redirectUrl;
         })
     };

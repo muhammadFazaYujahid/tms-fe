@@ -38,6 +38,9 @@ export class AuthServices {
         // sessionStorage.setItem('org_key', data.org);
         sessionStorage.setItem('loggedInEmail', data.email);
         sessionStorage.setItem('user_key', data.user_key);
+        sessionStorage.setItem('userRole', data.user_role);
+        sessionStorage.setItem('username', data.username);
+        sessionStorage.setItem('user_photo', data.user_photo);
         Cookies.set('accesToken', data.token, { expires: 1 });
         Cookies.set('logged_in', true, { expires: 1 });
         // Cookies.set('org_key', data.org, { expires: 1 });

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useContext } from 'react';
+import React, { useRef, useState, useEffect, useContext, Component, createRef, Fragment } from 'react';
 import { Divider } from 'primereact/divider';
 import { Button } from 'primereact/button';
 import { ScrollPanel } from 'primereact/scrollpanel';
@@ -30,84 +30,91 @@ import EditParent from './task-details/EditParent';
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 import { LayoutContext } from '../layout/context/layoutcontext';
 import { Toast } from 'primereact/toast';
+import socket from '../utils/Socket';
 
-const TaskDialog = ({ taskKey, previousKey }) => {
+class TaskDialog extends Component {
+    static contextType = LayoutContext;
 
-    const { showToast, toast } = useContext(LayoutContext);
+    constructor(props) {
+        super(props);
 
-    const [fieldValue, setFieldValue] = useState('');
+        this.state = {
+            fieldValue: '',
+            attachClicked: false,
+            addChildDialog: false,
+            dialogHeader: '',
+            dialogContent: '',
+            task_key: props.taskKey,
+            userKey: null,
+        };
 
-    const [attachClicked, setattachClicked] = useState(false)
+        this.actionOp = createRef();
+        this.shareOp = createRef();
+        this.watchOp = createRef();
+        this.voteOp = createRef();
+        this.setParentOp = createRef();
+        this.cobaToast = createRef();
+    }
 
-    const [addChildDialog, setAddChildDialog] = useState(false)
-
-    const [dialogHeader, setDialogHeader] = useState('');
-    const [dialogContent, setDialogContent] = useState('');
-
-    const [task_key, setTask_key] = useState(taskKey);
-
-    useEffect(() => {
+    componentDidMount() {
         const taskServices = new TaskServices();
-        taskServices.getDetail(task_key).then((res) => { setFieldValue(res); });
+        taskServices.getDetail(this.state.task_key).then((res) => {
+            this.setState({ fieldValue: res });
+        });
+        this.setState({ userKey: sessionStorage.getItem('user_key') });
 
         on('refreshTaskDetail', () => {
-            setAddChildDialog(false)
-            taskServices.getDetail(task_key).then((res) => { setFieldValue(res); emit('taskrefreshed', res) });
+            this.setState({ addChildDialog: false });
+            taskServices.getDetail(this.state.task_key).then((res) => {
+                this.setState({ fieldValue: res });
+                emit('taskrefreshed', res);
+            });
+        });
 
-        })
-    }, [task_key])
-
-    useEffect(() => {
         on('cancelEditDesc', () => {
-            setDescClicked(false);
-        })
+            this.setState({ descClicked: false });
+        });
+
         on('closeAddIssue', () => {
-            setAddChildDialog(false);
-        })
+            this.setState({ addChildDialog: false });
+        });
 
+        on('showTaskToast', ({ toastData }) => {
+            if (this.cobaToast.current) {
+                this.showingToast(toastData);
+            }
+        });
+    }
 
-    }, [])
-
-
-
-    const maskStyles = {
-        backgroundColor: 'rgb(0 0 0 / 50%)',
+    toggleAction = (event) => {
+        this.actionOp.current.toggle(event);
     };
 
-    const actionOp = useRef(null);
-    const shareOp = useRef(null);
-    const watchOp = useRef(null);
-    const voteOp = useRef(null);
-    const setParentOp = useRef(null);
-
-    const toggleAction = (event) => {
-        actionOp.current.toggle(event);
+    toggleShare = (event) => {
+        this.shareOp.current.toggle(event);
     };
 
-    const toggleShare = (event) => {
-        shareOp.current.toggle(event);
+    toggleWathed = (event) => {
+        this.watchOp.current.toggle(event);
     };
 
-    const toggleWathed = (event) => {
-        watchOp.current.toggle(event);
+    toggleVote = (event) => {
+        this.voteOp.current.toggle(event);
     };
 
-    const toggleVote = (event) => {
-        voteOp.current.toggle(event);
-    };
-    const toggleParent = (event) => {
-        setParentOp.current.toggle(event);
+    toggleParent = (event) => {
+        this.setParentOp.current.toggle(event);
     };
 
-    const handleChildUpdate = (updatedStatus) => {
-        // Update the status key in the edited task data
+    handleChildUpdate = (updatedStatus) => {
         const updatedTaskData = {
-            ...fieldValue,
+            ...this.state.fieldValue,
             status_key: updatedStatus,
         };
-        setFieldValue(updatedTaskData);
+        this.setState({ fieldValue: updatedTaskData });
     };
-    const flagTask = (task_key) => {
+
+    flagTask = (task_key) => {
         const data = {
             task_key: task_key,
             activity: {
@@ -128,7 +135,8 @@ const TaskDialog = ({ taskKey, previousKey }) => {
             }
         })
     }
-    const unFlagTask = (task_key) => {
+
+    unFlagTask = (task_key) => {
         const data = {
             task_key: task_key,
             activity: {
@@ -150,25 +158,22 @@ const TaskDialog = ({ taskKey, previousKey }) => {
         })
     }
 
-    const confirmDelete = (event, task_key) => {
+    confirmDelete = (event, task_key) => {
         confirmPopup({
             target: event.currentTarget,
             message: 'Delete Task?',
             icon: 'pi pi-exclamation-triangle',
             acceptClassName: 'p-button-danger',
-            accept: () => accept(task_key),
+            accept: () => this.accept(task_key),
         });
     };
 
-    const accept = (task_key) => {
-        // const data = {
-        //     task_key: task_key,
-        // }
+    accept = (task_key) => {
         const taskServices = new TaskServices();
         taskServices.deleteTask(task_key)
             .then((res) => {
                 if (!res.success) {
-                    return showToast({
+                    return this.context.showToast({
                         severity: 'error',
                         summary: 'Remove Issue Failed',
                         detail: res.message,
@@ -176,171 +181,202 @@ const TaskDialog = ({ taskKey, previousKey }) => {
                     });
                 }
                 emit('taskDeleted');
-                showToast({
+                this.context.showToast({
                     severity: 'success',
                     summary: 'Task Deleted',
                     detail: 'Task Deleted successfully',
                     sticky: false
                 });
-                // if (data.success) {
-                // }
             });
     };
 
-    const cobaToast = useRef(null);
-
-    useEffect(() => {
-        on('showTaskToast', ({ toastData }) => {
-            if (cobaToast != null) {
-                showingToast({ severity: toastData.severity, summary: toastData.summary, detail: toastData.detail, sticky: toastData.sticky, })
-
-            }
-        })
-    }, [cobaToast])
-
-
-    const showingToast = ({ severity, summary, detail, sticky }) => {
-        cobaToast.current.show({ severity: severity, summary: summary, detail: detail, sticky: sticky });
+    showingToast = ({ severity, summary, detail, sticky }) => {
+        this.cobaToast.current.show({ severity, summary, detail, sticky });
     };
 
-    if (fieldValue === '') {
-        return (
-            <TaskLoading />
-        )
+    confirmTaskStatus = () => {
+        const { fieldValue } = this.state;
+        const formData = { status_key: fieldValue?.status_key, task_key: fieldValue?.task_key, task_name: fieldValue?.task_name, verify_status: 'verified', is_confirm: true }
+        const taskService = new TaskServices();
+        taskService.changeStatus(formData).then((data) => {
+            if (data.success) {
+                emit('refreshTaskDialog');
+                emit('refreshBoard');
+                emit('refreshActivity');
+
+                const notifData = { room: sessionStorage.getItem('project_key') };
+                socket.emit('sendNotif', notifData);
+            }
+        });
     }
 
-    return (<>
-        <Toast ref={toast} />
-        {/* <Button onClick={showingToast} label="Show" /> */}
-        <h5 className='text-gray-500' style={{ position: "absolute", top: "0", marginTop: "1em" }} >
-            {fieldValue.task_key} |
-        </h5>
-        <h5 className='text-gray-500' style={{ position: "absolute", top: "0", marginTop: "1em", marginLeft: "4.5em" }} >
-            {fieldValue.task_name}
-        </h5>
-        <div className='text-gray-500 custom-sidebar-header' >
+    render() {
+        const maskStyles = {
+            backgroundColor: 'rgb(0 0 0 / 50%)',
+        };
 
-            {/* <Button icon="pi pi-lock" className="text-gray-900 p-button-rounded p-button-text" /> */}
+        const { fieldValue, attachClicked, addChildDialog, dialogHeader, dialogContent, userKey } = this.state;
 
-            <Button icon="pi pi-eye" onClick={toggleWathed} className="text-gray-900 p-button-rounded p-button-text" />
-            <OverlayPanel className='p-0' ref={watchOp} appendTo={typeof window !== 'undefined' ? document.body : null}>
-                <WatchSection taskKey={fieldValue.task_key} />
-            </OverlayPanel>
+        if (fieldValue === '') {
+            return <TaskLoading />;
+        }
 
-            <Button icon="pi pi-thumbs-up" onClick={toggleVote} className="text-gray-900 p-button-rounded p-button-text" />
-            <OverlayPanel className='p-0' ref={voteOp} appendTo={typeof window !== 'undefined' ? document.body : null}>
-                <VoteSection taskKey={fieldValue.task_key} />
-            </OverlayPanel>
-
-            <Button icon="pi pi-share-alt" onClick={toggleShare} className="text-gray-900 p-button-rounded p-button-text" />
-            <OverlayPanel className='p-0' ref={shareOp} appendTo={typeof window !== 'undefined' ? document.body : null}>
-                <ShareSection taskData={{ task_key: fieldValue.task_key, task_name: fieldValue.task_name }} />
-            </OverlayPanel>
-
-            <Button icon="pi pi-ellipsis-h" onClick={toggleAction} className="text-gray-900 p-button-rounded p-button-text p-0" />
-            <OverlayPanel className='p-0' ref={actionOp} appendTo={typeof window !== 'undefined' ? document.body : null}>
-                {/* <ListBox value={selectedAction} onChange={(e) => setselectedAction(e.value)} options={cities} optionLabel="name" className="w-full md:w-10rem border-none p-0" /> */}
-                <div className='grid w-10rem'>
-                    <div className='col-12'>
-                        {(fieldValue.flag) ?
-                            <Button label='Remove flag' onClick={() => unFlagTask(fieldValue.task_key)} className='p-button-text p-button-secondary w-full p-button-sm' /> :
-                            <Button label='Add flag' onClick={() => flagTask(fieldValue.task_key)} className='p-button-text p-button-secondary w-full p-button-sm' />}
-
-                    </div>
-                    <div className='col-12'>
-                        <Button label='Add/Change Parent' onClick={toggleParent} className='p-button-text p-button-secondary w-full p-button-sm' />
-
-                        <OverlayPanel ref={setParentOp} showCloseIcon>
-                            <EditParent taskKey={fieldValue.task_key} parent_key={fieldValue.parent_key} />
-                            {/* <EditName data={selectedFile} taskKey={attachment.task_key} fileId={attachments[index].id} fileName={attachments[index].attach_name} /> */}
-                        </OverlayPanel>
-                    </div>
-                    <div className='col-12'>
-                        <ConfirmPopup />
-                        <Button onClick={(e) => confirmDelete(e, fieldValue.task_key)} label='Delete' className='p-button-text p-button-secondary w-full p-button-sm text-red-500' />
-                    </div>
-
-                </div>
-            </OverlayPanel>
-        </div>
-
-        <div className='grid'>
-            <div className='col'>
-                <ScrollPanel style={{ height: "85vh" }}>
-
-                    <h1 style={{ fontWeight: 'normal' }}>{fieldValue.name}</h1>
-
-                    <Button label="Attach file" onClick={() => setattachClicked(true)} className='p-1 m-2 px-2 bg-grey-200 p-button-secondary' icon="pi pi-paperclip"></Button>
-                    <Button label="Add a Child Task"
-                        onClick={() => {
-                            setAddChildDialog(true);
-                            setDialogHeader("Add Child Task");
-                            setDialogContent(<CreateTask sprintKey={fieldValue.sprint_key} isChild={true} parentKey={fieldValue.task_key} parentName={fieldValue.task_namr} />)
-                        }} className='p-1 m-2 px-2 bg-grey-200 p-button-secondary' icon="pi pi-sitemap"></Button>
-                    <Button label="Add Issue" className='p-1 m-2 px-2 bg-grey-200 p-button-secondary' icon="pi pi-link" onClick={() => {
-                        setAddChildDialog(true);
-                        setDialogHeader("Add Task Issue");
-                        setDialogContent(<AddIssue taskKey={fieldValue.task_key} taskName={fieldValue.task_name} />)
-                    }}></Button>
-
-                    {attachClicked == true ? (<>
-                        <AttachFile taskKey={fieldValue.task_key} />
-
-                        <div className='mt-3'>
-                            <Button className='p-button-secondary p-button-outlined' label="Close" onClick={() => setattachClicked(false)} />
+        return (<>
+            <Toast ref={this.context.toast} />
+            {/* <Button onClick={showingToast} label="Show" /> */}
+            <h5 className='text-gray-500' style={{ position: "absolute", top: "0", marginTop: "1em" }} >
+                {fieldValue?.task_key} |
+            </h5>
+            <h5 className='text-gray-500' style={{ position: "absolute", top: "0", marginTop: "1em", marginLeft: "4.5em" }} >
+                {fieldValue?.task_name}
+            </h5>
+            <div className='text-gray-500 custom-sidebar-header' >
+    
+                {/* <Button icon="pi pi-lock" className="text-gray-900 p-button-rounded p-button-text" /> */}
+    
+                {/* <Button icon="pi pi-eye" onClick={toggleWathed} className="text-gray-900 p-button-rounded p-button-text" />
+                <OverlayPanel className='p-0' ref={watchOp} appendTo={typeof window !== 'undefined' ? document.body : null}>
+                    <WatchSection taskKey={fieldValue?.task_key} />
+                </OverlayPanel> */}
+    
+                {/* <Button icon="pi pi-thumbs-up" onClick={toggleVote} className="text-gray-900 p-button-rounded p-button-text" />
+                <OverlayPanel className='p-0' ref={voteOp} appendTo={typeof window !== 'undefined' ? document.body : null}>
+                    <VoteSection taskKey={fieldValue?.task_key} />
+                </OverlayPanel> */}
+    
+                <Button icon="pi pi-share-alt" onClick={this.toggleShare} className="text-gray-900 p-button-rounded p-button-text" />
+                <OverlayPanel className='p-0' ref={this.shareOp} appendTo={typeof window !== 'undefined' ? document.body : null}>
+                    <ShareSection taskData={{ task_key: fieldValue?.task_key, task_name: fieldValue?.task_name }} />
+                </OverlayPanel>
+                {/* {console.log('apakah', fieldValue.status_key.split('-')[0])} */}
+    
+                {!(fieldValue.status_key.split('-')[0] === 'CP' && fieldValue.verify_status === "verified") && 
+                    <Button icon="pi pi-ellipsis-h" onClick={this.toggleAction} className="text-gray-900 p-button-rounded p-button-text p-0" />
+                }
+                <OverlayPanel className='p-0' ref={this.actionOp} appendTo={typeof window !== 'undefined' ? document.body : null}>
+                    {/* <ListBox value={selectedAction} onChange={(e) => setselectedAction(e.value)} options={cities} optionLabel="name" className="w-full md:w-10rem border-none p-0" /> */}
+                    <div className='grid w-10rem'>
+                        {/* <div className='col-12'>
+                            {(fieldValue?.flag) ?
+                                <Button label='Remove flag' onClick={() => unFlagTask(fieldValue?.task_key)} className='p-button-text p-button-secondary w-full p-button-sm' /> :
+                                <Button label='Add flag' onClick={() => flagTask(fieldValue?.task_key)} className='p-button-text p-button-secondary w-full p-button-sm' />}
+    
+                        </div> */}
+                        <div className='col-12'>
+                            <Button label='Add/Change Parent' onClick={this.toggleParent} className='p-button-text p-button-secondary w-full p-button-sm' />
+    
+                            <OverlayPanel ref={this.setParentOp} showCloseIcon>
+                                <EditParent taskKey={fieldValue?.task_key} parent_key={fieldValue?.parent_key} />
+                                {/* <EditName data={selectedFile} taskKey={attachment.task_key} fileId={attachments[index].id} fileName={attachments[index].attach_name} /> */}
+                            </OverlayPanel>
                         </div>
-                    </>) : (<></>)}
-
-
-                    <FileList taskKey={fieldValue.task_key} taskName={fieldValue.task_name} />
-
-                    <EditDesc taskData={{ task_key: fieldValue.task_key, description: fieldValue.task_description, task_name: fieldValue.task_name }} />
-                    <h5 className='mt-5'>Child Task</h5>
-
-
-                    <ChildIssue taskKey={fieldValue.task_key} onChildUpdate={handleChildUpdate} taskName={fieldValue.task_name} />
-                    {/* {addChildClicked == true ? (<>
-                        <AddChild />
-                    </>
-                    ) : (<>
-                    </>
-                    )} */}
-
-
-                    <div className='col-12 mt-5 '>
-                        <TaskIssue taskKey={fieldValue.task_key} taskName={fieldValue.task_name} />
+                        <div className='col-12'>
+                            <ConfirmPopup />
+                            <Button onClick={(e) => this.confirmDelete(e, fieldValue?.task_key)} label='Delete' className='p-button-text p-button-secondary w-full p-button-sm text-red-500' />
+                        </div>
+    
                     </div>
+                </OverlayPanel>
+            </div>
+    
+            <div className='grid'>
+                <div className='col'>
+                    <ScrollPanel style={{ height: "85vh" }}>
+    
+                        <h1 style={{ fontWeight: 'normal' }}>{fieldValue?.name}</h1>
 
-                    <div className='col-12 mt-6 '>
-                        <Activity taskData={fieldValue}></Activity>
+                        {!(fieldValue.status_key.split('-')[0] === 'CP' && fieldValue.verify_status === "verified") &&
+                            <Fragment>
+                                <Button label="Attach file" onClick={() => this.setState({attachClicked: true})} className='p-1 m-2 px-2 bg-grey-200 p-button-secondary' icon="pi pi-paperclip"></Button>
+                                <Button label="Add a Child Task"
+                                    onClick={() => {
+                                        this.setState({
+                                            addChildDialog: true,
+                                            dialogHeader: "Add Child Task",
+                                            dialogContent: <CreateTask sprintKey={fieldValue?.sprint_key} isChild={true} parentKey={fieldValue?.task_key} parentName={fieldValue?.task_namr} />
+                                        })
+                                    }} className='p-1 m-2 px-2 bg-grey-200 p-button-secondary' icon="pi pi-sitemap"></Button>
+                                <Button label="Add Issue" className='p-1 m-2 px-2 bg-grey-200 p-button-secondary' icon="pi pi-link" onClick={() => {
+                                    this.setState({
+                                        addChildDialog: true,
+                                        dialogHeader: "Add Task Issue",
+                                        dialogContent: <AddIssue taskKey={fieldValue?.task_key} taskName={fieldValue?.task_name} />
+                                    })
+                                }}></Button>
+                            </Fragment>
+                        }
+    
+    
+                        {attachClicked == true ? (<>
+                            <AttachFile taskKey={fieldValue?.task_key} />
+    
+                            <div className='mt-3'>
+                                <Button className='p-button-secondary p-button-outlined' label="Close" onClick={() => this.setState({attachClicked: false})} />
+                            </div>
+                        </>) : (<></>)}
+    
+    
+                        <FileList taskKey={fieldValue?.task_key} taskName={fieldValue?.task_name} additionalInfo={{ status_key: fieldValue?.status_key, verify_status: fieldValue?.verify_status }} />
+    
+                        <EditDesc taskData={{ task_key: fieldValue?.task_key, description: fieldValue?.task_description, task_name: fieldValue?.task_name, status_key: fieldValue?.status_key, verify_status: fieldValue?.verify_status }} />
+                        <h5 className='mt-5'>Child Task</h5>
+    
+    
+                        <ChildIssue taskKey={fieldValue?.task_key} onChildUpdate={this.handleChildUpdate} taskName={fieldValue?.task_name} additionalInfo={{ status_key: fieldValue?.status_key, verify_status: fieldValue?.verify_status }} />
+                        {/* {addChildClicked == true ? (<>
+                            <AddChild />
+                        </>
+                        ) : (<>
+                        </>
+                        )} */}
+    
+    
+                        <div className='col-12 mt-5 '>
+                            <TaskIssue taskKey={fieldValue?.task_key} taskName={fieldValue?.task_name} additionalInfo={{ status_key: fieldValue?.status_key, verify_status: fieldValue?.verify_status }} />
+                        </div>
+    
+                        <div className='col-12 mt-6 '>
+                            <Activity taskData={fieldValue}></Activity>
+                        </div>
+                    </ScrollPanel>
+    
+                </div>
+                <Divider layout='vertical'></Divider>
+                <div className='col lg:col-4'>
+    
+                    <AssignPoint fieldValue={fieldValue} />
+                    <div className='mt-4' style={{display: 'flex', justifyContent: "flex-end"}}>
+                        {/* {console.log('task', fieldValue)} */}
+                        {/* {(fieldValue?.task_handlers.find(data => data.type === 'assigner').handler === userKey) && 
+                            <Button onClick={() => revertTaskStatus()} className='m-1' label="Revert Status Change" size='small' severity="danger" />
+                        } */}
+                        {((fieldValue?.task_handlers.find(data => data.type === "reporter").handler === userKey) && fieldValue?.verify_status === 'requested') && 
+                            <Button onClick={() => this.confirmTaskStatus()} className='m-1' label="Confirm Status Change" size='small' severity="success" />
+                        }
+                        {(fieldValue?.verify_status === 'verified') && <div className='p-2 bg-green-500 w-full text-center text-white font-semibold' style={{borderRadius: '5px'}}>Confirmed by Reporter</div>}
                     </div>
-                </ScrollPanel>
-
+                </div>
             </div>
-            <Divider layout='vertical'></Divider>
-            <div className='col lg:col-4'>
+    
+    
+    
+            <Dialog header={<div className='grid'>
+                <div className='col'>
+                    <span>{dialogHeader}</span>
+    
+                </div>
+                {/* <div className='col-1 mr-6'>
+                                    <Button icon="pi pi-window-maximize" className="p-button-secondary p-button-text p-0 btn btn-sm" onClick={() => { setVisibleFullScreen(true) }} />
+                                </div> */}
+    
+            </div>} maskStyle={maskStyles} modal={true} visible={addChildDialog} className='p-dialog' style={{ width: '30vw', backgroundColor: "#fff" }} onHide={() => this.setState({addChildDialog: false})}>
+                {dialogContent}
+            </Dialog>
+    
+        </>
+        );
+    }
+}
 
-                <AssignPoint fieldValue={fieldValue} />
-            </div>
-        </div>
-
-
-
-        <Dialog header={<div className='grid'>
-            <div className='col'>
-                <span>{dialogHeader}</span>
-
-            </div>
-            {/* <div className='col-1 mr-6'>
-                                <Button icon="pi pi-window-maximize" className="p-button-secondary p-button-text p-0 btn btn-sm" onClick={() => { setVisibleFullScreen(true) }} />
-                            </div> */}
-
-        </div>} maskStyle={maskStyles} modal={true} visible={addChildDialog} className='p-dialog' style={{ width: '30vw', backgroundColor: "#fff" }} onHide={() => setAddChildDialog(false)}>
-            {dialogContent}
-        </Dialog>
-
-    </>
-    );
-};
 
 export default TaskDialog;

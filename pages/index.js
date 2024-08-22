@@ -7,11 +7,11 @@ const Dashboard = () => {
 
     useEffect(() => {
         window.location.href = '/auth/login';
-        setShowSidebar(false);
+        // setShowSidebar(false);
 
-        return () => {
-            setShowSidebar(true);
-        }
+        // return () => {
+        //     setShowSidebar(true);
+        // }
     }, [])
 
     // const contextPath = getConfig().publicRuntimeConfig.contextPath;

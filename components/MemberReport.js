@@ -45,11 +45,11 @@ const MemberReport = ({ workKey }) => {
         import('jspdf').then((jsPDF) => {
             import('jspdf-autotable').then(() => {
                 const doc = new jsPDF.default(0, 0);
-                doc.addImage(`${contextPath}/demo/images/assets/kop.png`, "PNG", 20, 10);
+                // doc.addImage(`${contextPath}/demo/images/assets/kop.png`, "PNG", 20, 10);
                 doc.setFont("times", "bold")
                 doc.text("Member Report", 105, 45, null, null, "center")
                 doc.autoTable(exportColumns, userList, { startY: 50 });
-                doc.addImage(`${contextPath}/demo/images/assets/ttd.png`, "PNG", 120, 150);
+                // doc.addImage(`${contextPath}/demo/images/assets/ttd.png`, "PNG", 120, 150);
                 doc.save('User_Report.pdf');
             });
         });

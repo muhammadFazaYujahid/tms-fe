@@ -18,7 +18,7 @@ const InviteOrgDialog = () => {
     const roles = [
         { name: 'Admin', code: 'admin' },
         { name: 'User', code: 'user' },
-        { name: 'Superadmin', code: 'superadmin' },
+        // { name: 'Superadmin', code: 'superadmin' },
     ];
 
     const defaultValues = {
@@ -29,6 +29,8 @@ const InviteOrgDialog = () => {
         formState: { errors },
         handleSubmit,
     } = useForm({ defaultValues });
+
+    const userRole = useRef(sessionStorage.getItem('userRole'));
 
     const onSubmit = (data) => {
         const userData = selectedEmail.filter(user => {
@@ -123,7 +125,7 @@ const InviteOrgDialog = () => {
     return (<>
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className='grid'>
-
+            {console.log('user role', sessionStorage.getItem('userRole'))}
                 <div className="col-12">
                     <div className="card border-none p-fluid">
                         <div className="field">

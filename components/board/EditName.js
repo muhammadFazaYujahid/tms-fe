@@ -7,15 +7,18 @@ import { Controller, useForm } from 'react-hook-form';
 import { LayoutContext } from '../../layout/context/layoutcontext';
 import { emit } from '../../utils/EventEmitter';
 import { TaskStatusService } from '../../services/TaskStatusService';
+import { ColorPicker } from 'primereact/colorpicker';
+import { Checkbox } from 'primereact/checkbox';
 
 const EditName = ({ selectedStatus }) => {
     const { showToast } = useContext(LayoutContext);
-    const [statusData, setStatusData] = useState({ status_name: selectedStatus.name, status_key: selectedStatus.status_key });
+    const [statusData, setStatusData] = useState({ status_name: selectedStatus.name, status_key: selectedStatus.status_key, color: selectedStatus.color, need_verify: selectedStatus.need_verify });
+    const [needVerify, setNeedVerify] = useState(statusData.need_verify);
     const defaultValues = {
         status_name: statusData.status_name,
         status_key: statusData.status_key
     };
-
+    const [color, setColor] = useState(statusData.color);
     const {
         control,
         formState: { errors },
@@ -33,6 +36,8 @@ const EditName = ({ selectedStatus }) => {
             url: window.location.href,
             additional_text: ''
         }
+        data.color = `${(color === null) ? "#f4f4f4" : color}`;
+        data.need_verify = needVerify;
         const taskStatusService = new TaskStatusService();
         taskStatusService.editStatusName(data)
             .then((res) => {
@@ -58,7 +63,7 @@ const EditName = ({ selectedStatus }) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <h5>Change Status Name</h5>
+            <h5>Change Status</h5>
             <div className='col-12'>
 
                 <Controller
@@ -67,6 +72,15 @@ const EditName = ({ selectedStatus }) => {
                     render={({ field }) => (
                         <>
                             <InputText id="link_text" {...field} className='w-full' type="text" />
+                            <div className='mt-3'>
+                                <label>Color : </label>
+                                <ColorPicker value={color} onChange={(e) => setColor(e.value)} />
+                            </div>
+                            
+                            <div className="mt-3 d-flex" style={{ display: "flex" }}>
+                                <Checkbox inputId="ingredient1" onChange={e => setNeedVerify(e.checked)} checked={needVerify}></Checkbox>
+                                <label htmlFor="ingredient1" className="ml-2">Confirmation</label>
+                            </div>
                         </>
                     )}
                 />

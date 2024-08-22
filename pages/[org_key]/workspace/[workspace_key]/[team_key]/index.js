@@ -6,17 +6,17 @@ import { Dialog } from 'primereact/dialog';
 
 import getConfig from 'next/config';
 
-import { LayoutContext } from '../../../../../layout/context/layoutcontext';
+import { LayoutContext } from '@layout/context/layoutcontext';
 import { Divider } from 'primereact/divider';
 import Link from 'next/link';
 import { ScrollPanel } from 'primereact/scrollpanel';
-import { TeamServices } from '../../../../../services/TeamServices';
+import { TeamServices } from '@services/TeamServices';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 import { OverlayPanel } from 'primereact/overlaypanel';
-import EditTeamName from '../../../../../components/workspace/EditTeamName';
-import { on } from '../../../../../utils/EventEmitter';
+import EditTeamName from '@components/workspace/EditTeamName';
+import { on } from '@utils/EventEmitter';
 
 const Team = ({ myQuery }) => {
     const router = useRouter();

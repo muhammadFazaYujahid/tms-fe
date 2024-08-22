@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 // import socketIo from '../../utils/Socket';
 export const LayoutContext = React.createContext();
 
@@ -24,10 +24,21 @@ export const LayoutProvider = (props) => {
     const [modalDialog, setModalDialog] = useState(false);
     const [contentDialog, setContentDialog] = useState(false);
 
-    const [showSidebar, setShowSidebar] = useState(true);
+    const [showSidebar, setShowSidebar] = useState(false);
 
     const [addIssueDialog, setAddIssueDialog] = useState(false)
     const [newnotification, setNewNotification] = useState(false)
+    const [userRole, setUserRole] = useState(null)
+
+    const [orgKeyLink, setOrgKeyLink] = useState('')
+    const [projectKeyLink, setProjectKeyLink] = useState('')
+    const [avaiableOrgData, setAvaiableOrgData] = useState([]);
+
+    useEffect(() => {
+      setUserRole(sessionStorage.getItem('userRole'))
+      setOrgKeyLink(sessionStorage.getItem('org_key'))
+    }, [])
+    
 
     // const [socket, setSocket] = useState(socketIo);
 
@@ -61,9 +72,6 @@ export const LayoutProvider = (props) => {
         toast.current.show({ severity: severity, summary: summary, detail: detail, sticky: sticky });
     };
 
-    const [orgKeyLink, setOrgKeyLink] = useState('')
-    const [projectKeyLink, setProjectKeyLink] = useState('')
-    const [avaiableOrgData, setAvaiableOrgData] = useState([]);
 
     const value = {
         layoutConfig,
@@ -89,7 +97,9 @@ export const LayoutProvider = (props) => {
         projectKeyLink,
         setProjectKeyLink,
         avaiableOrgData,
-        setAvaiableOrgData
+        setAvaiableOrgData,
+        userRole,
+        setUserRole
     };
 
     return <LayoutContext.Provider value={value}>{props.children}</LayoutContext.Provider>;

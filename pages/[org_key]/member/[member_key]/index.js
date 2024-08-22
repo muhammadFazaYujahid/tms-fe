@@ -5,29 +5,29 @@ import { Chip } from 'primereact/chip';
 
 import getConfig from 'next/config';
 
-import { LayoutContext } from '../../../../layout/context/layoutcontext';
+import { LayoutContext } from '@layout/context/layoutcontext';
 import { Divider } from 'primereact/divider';
 import Link from 'next/link';
 import { ScrollPanel } from 'primereact/scrollpanel';
-import { UserServices } from '../../../../services/UserServices';
+import { UserServices } from '@services/UserServices';
 
 const Member = ({ myQuery }) => {
 
-    const { setShowSidebar } = useContext(LayoutContext);
+    // const { setShowSidebar } = useContext(LayoutContext);
 
     const [userDetail, setUserDetail] = useState([]);
     const [taskList, setTaskList] = useState([]);
     const [projectList, setProjectList] = useState([]);
 
     useEffect(() => {
-        setShowSidebar(false);
+        // setShowSidebar(false);
 
         const userService = new UserServices;
         userService.getDetail(myQuery.member_key).then((res) => setUserDetail(res.data));
         userService.getMemberTask(myQuery.member_key).then((res) => setTaskList(res));
         userService.getMemberProject(myQuery.member_key).then((res) => setProjectList(res));
         return () => {
-            setShowSidebar(true);
+            // setShowSidebar(true);
         }
     }, [])
 
@@ -123,7 +123,7 @@ const Member = ({ myQuery }) => {
                                     <h5>Handled Projects</h5>
 
                                     <ScrollPanel style={{ height: "50vh" }} className="grid c mb-3 task-card">
-                                        {projectList.map((project) => (
+                                        {projectList?.map((project) => (
 
                                             <div className='col-12 mt-3 p-0'>
 

@@ -119,7 +119,7 @@ const AccountVerified = ({ token }) => {
                                                     rules={{
                                                         required: 'Confirm Password is required',
                                                         validate: (value) =>
-                                                            value === password.current || 'The passwords do not match',
+                                                            value === password.current || 'Password does not match',
                                                     }}
                                                     render={({ field }) => (
                                                         <>

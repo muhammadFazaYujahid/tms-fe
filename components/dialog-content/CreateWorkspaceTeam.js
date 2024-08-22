@@ -52,6 +52,7 @@ const CreateWorkspaceTeam = () => {
         workspaceServices.createTeam(data).then(() => {
             setContentDialog(false);
             emit('refreshMemberList');
+            emit('refreshWorkActivity');
             showToast({
                 severity: 'success',
                 summary: 'Team created',

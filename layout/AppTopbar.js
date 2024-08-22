@@ -15,10 +15,10 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import { Badge } from 'primereact/badge';
 import NotifSection from '../components/NotifSection';
 import InviteOrgDialog from '../components/dialog-content/InviteOrgDialog';
-import { useRouter } from 'next/router';
+import { OrgServices } from '../services/OrgServices';
+import { on } from '../utils/EventEmitter';
 
-const AppTopbar = forwardRef((props, ref) => {
-    const router = useRouter();
+const AppTopbar = forwardRef((_, ref) => {
     const { layoutState, onMenuToggle, setModalDialog, showSidebar, toast, newnotification, setNewNotification, orgKeyLink } = useContext(LayoutContext);
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
@@ -28,6 +28,9 @@ const AppTopbar = forwardRef((props, ref) => {
     const [dialogType, setDialogType] = useState(null);
     const [dialogHeader, setDialogHeader] = useState(null);
     const [orgKey, setOrgKey] = useState()
+    const [userRole, setUserRole] = useState()
+    const [userName, setUserName] = useState(null)
+    const [orgLogo, setOrgLogo] = useState(null)
 
     useImperativeHandle(ref, () => ({
         menubutton: menubuttonRef.current,
@@ -38,8 +41,19 @@ const AppTopbar = forwardRef((props, ref) => {
     useEffect(() => {
         // setOrgKey(Cookies.get('org_key'));
         setOrgKey(sessionStorage.getItem('org_key'));
+        setUserRole(sessionStorage.getItem('userRole'));
+        setUserName(sessionStorage.getItem('username'));
     }, [])
 
+    useEffect(() => {
+        const orgServices = new OrgServices;
+        orgServices.getOrgLogo().then((response) => setOrgLogo(response));
+        
+        on('refreshLogo', () => {
+            const orgServices = new OrgServices;
+            orgServices.getOrgLogo().then((response) => setOrgLogo(response));
+        })
+    }, [])
 
     const logout = () => {
         const authServices = new AuthServices();
@@ -53,9 +67,15 @@ const AppTopbar = forwardRef((props, ref) => {
             icon: <i className="pi pi-user text-lg rounded-full"></i>,
             items: [
                 {
-                    label: 'Account Setting',
-                    icon: 'pi pi-cog',
+                    label: userName,
+                    icon: 'pi pi-user',
                     url: '/profile',
+                    // command: () => { setModalDialog(true); setDialogType('invite-people') },
+                },
+                {
+                    label: 'Org Setting',
+                    icon: 'pi pi-users',
+                    url: `/${orgKey}/setting`,
                     // command: () => { setModalDialog(true); setDialogType('invite-people') },
                 },
                 {
@@ -81,7 +101,7 @@ const AppTopbar = forwardRef((props, ref) => {
                 },
             ]
         },
-        {
+        {   
             label: 'Organization',
             items: [
                 {
@@ -108,9 +128,11 @@ const AppTopbar = forwardRef((props, ref) => {
         <div className="layout-topbar">
             <Link href={"/" + orgKeyLink}>
                 <a className="layout-topbar-logo" style={{ justifyContent: "center" }}>
-                    <>
-                        <img src={`${contextPath}/layout/images/logo-milennia.png`} width="100px" height={'35px'} widt={'true'} alt="logo" />
-                    </>
+                    {(orgLogo === null) ? 
+                        <i className='pi pi-building' style={{ fontSize: '2.5rem' }}></i>
+                    : 
+                        <img src={orgLogo} style={{maxWidth: "100px", maxHeight: "35px"}} widt={'true'} alt="logo" />
+                    }
                 </a>
             </Link>
             {showSidebar == true ? (
@@ -120,10 +142,8 @@ const AppTopbar = forwardRef((props, ref) => {
                 </button>
             ) : (<></>)}
 
-
-
             <div className="layout-topbar-menu">
-                <Menubar model={menuItems} className='bg-transparent border-none' />
+                {(userRole != 'user') && <Menubar model={menuItems} className='bg-transparent border-none' /> }
                 <ModalDialog dialogType={dialogType} dialogHeader={dialogHeader} />
 
             </div>

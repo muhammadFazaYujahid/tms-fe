@@ -64,7 +64,7 @@ export class TaskStatusService {
     async changeStatus(formData) {
         formData.url = window.location.href;
         // this.socket.emit('updateStatus');
-        console.log(formData);
+        // console.log(formData);
         const response = await fetch(this.serverURL + '/api/organization/project/task/status/change-status', {
             method: 'POST',
             credentials: 'include',

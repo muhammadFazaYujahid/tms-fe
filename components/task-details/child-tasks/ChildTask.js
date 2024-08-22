@@ -10,7 +10,7 @@ import { Sidebar } from 'primereact/sidebar';
 import TaskDialog from '../../TaskDialog';
 import { useRouter } from 'next/router';
 
-const ChildTask = ({ taskKey, taskName }) => {
+const ChildTask = ({ taskKey, taskName, additionalInfo }) => {
 
     const router = useRouter();
     const { showToast } = useContext(LayoutContext);
@@ -144,6 +144,7 @@ const ChildTask = ({ taskKey, taskName }) => {
     }
 
     return (<>
+    {console.log(childData)}
         {childData.map((task) => (
 
             <div className="col-12" key={task.id}>
@@ -160,6 +161,7 @@ const ChildTask = ({ taskKey, taskName }) => {
                                 <Dropdown
                                     style={{ margin: "-0.6em 0" }} size="small"
                                     value={category}
+                                    disabled={(task.status_key.split('-')[0] === 'CP' && task.verify_status === "verified")}
                                     onChange={(e) => changeStatus(e.value, task.task_key, task.task_name)}
                                     // placeholder={taskStatus.filter((status) => status.status_key === task.status_key)[0].name}
                                     placeholder={
@@ -172,7 +174,10 @@ const ChildTask = ({ taskKey, taskName }) => {
                                     className="p-inputtext-sm" />
 
                                 <ConfirmPopup />
-                                <Button onClick={(e) => confirmDelete(e, task.task_key)} icon="pi pi-times" className="p-button-danger p-button-text p-button-rounded ml-3" style={{ margin: "-0.6em -2em -0.6em 0" }}></Button>
+
+                                {!(additionalInfo.status_key.split('-')[0] === 'CP' && additionalInfo.verify_status === "verified") && 
+                                    <Button onClick={(e) => confirmDelete(e, task.task_key)} icon="pi pi-times" className="p-button-danger p-button-text p-button-rounded ml-3" style={{ margin: "-0.6em -2em -0.6em 0" }}></Button>
+                                }
                             </div>
                             {/* <div className="mt-3 lg:mt-0">
                                 <Button icon="pi pi-user" style={{ margin: "-0.6em 0" }} className="p-button-rounded p-button-outlined mr-2 btn btn-sm" />
