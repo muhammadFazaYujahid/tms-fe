@@ -12,14 +12,6 @@ module.exports = {
         // SERVER_URL: 'http://localhost:9000',
         SERVER_URL: process.env.SERVER_URL,
     },
-    async rewrites() {
-        return [
-          {
-            source: '/api/:path*',
-            destination: 'https://fazatms.serveo.net/:path*',
-          },
-        ]
-      },
     webpack(config) {
         config.resolve.alias = {
             ...config.resolve.alias,
